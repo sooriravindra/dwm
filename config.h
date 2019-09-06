@@ -65,6 +65,7 @@ static const char *termcmd[]  = { "st", NULL };
 
 static Key keys[] = {
 	/* modifier                     key           function        argument */
+	{ MODKEY,                       XK_c,         createview,     {.i = +1 } },
 	{ MODKEY,                       XK_n,         shiftview,      {.i = +1 } },
 	{ MODKEY,                       XK_p,         shiftview,      {.i = -1 } },
 	{ MODKEY,                       XK_semicolon, spawn,          {.v = fuzzycmd } },

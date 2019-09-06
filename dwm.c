@@ -236,6 +236,7 @@ static int xerrordummy(Display *dpy, XErrorEvent *ee);
 static int xerrorstart(Display *dpy, XErrorEvent *ee);
 static void zoom(const Arg *arg);
 static void shiftview(const Arg *arg);
+static void createview(const Arg *arg);
 
 /* variables */
 static const char broken[] = "broken";
@@ -2207,6 +2208,36 @@ zoom(const Arg *arg)
 		if (!c || !(c = nexttiled(c->next)))
 			return;
 	pop(c);
+}
+
+void
+createview(const Arg *arg)
+{
+	Arg a;
+	Client *c;
+	unsigned clients_present = 0;
+	int seltags = 1;
+
+	while (1) {
+		// Check if tag has clients
+		clients_present = 0;
+		for (c = selmon->clients; c; c = c->next)
+			if (seltags & c->tags) {
+				clients_present = 1;
+				break;
+			}
+
+		if (!clients_present)
+			break;
+
+		seltags = (seltags << 1);
+
+		if(seltags > (1<<8))
+			return;
+	}
+
+	a.i = seltags;
+	view(&a);
 }
 
 void
