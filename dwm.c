@@ -2244,10 +2244,10 @@ void
 shiftview(const Arg *arg)
 {
 	Arg a;
-	Monitor *m;
 	Client *c;
 	unsigned visible = 0;
 	int i = arg->i;
+	int count = 0;
 	int nextseltags, curseltags = selmon->tagset[selmon->seltags];
 
 	do {
@@ -2258,17 +2258,18 @@ shiftview(const Arg *arg)
 			nextseltags = curseltags >> (- i) | (curseltags << (LENGTH(tags) + i));
 
                 // Check if tag is visible
-		for (m = mons; m && !visible; m = m->next)
-			for (c = m->clients; c; c = c->next)
-				if (nextseltags & c->tags) {
-                                    visible = 1;
-                                    break;
-                                }
+		for (c = selmon->clients; c && !visible; c = c->next)
+			if (nextseltags & c->tags) {
+				visible = 1;
+				break;
+			}
 		i += arg->i;
-	} while (!visible);
+	} while (!visible && ++count < 10);
 
-	a.i = nextseltags;
-	view(&a);
+	if (count < 10) {
+		a.i = nextseltags;
+		view(&a);
+	}
 }
 
 int
