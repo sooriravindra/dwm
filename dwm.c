@@ -732,6 +732,7 @@ drawbar(Monitor *m)
 	int boxs = drw->fonts->h / 9;
 	int boxw = drw->fonts->h / 6 + 2;
 	unsigned int i, occ = 0, urg = 0;
+        const char* tag_txt;
 	Client *c;
 
 	/* draw status first so it can be overdrawn by tags later */
@@ -752,9 +753,10 @@ drawbar(Monitor *m)
 		if (!(occ & 1 << i || m->tagset[m->seltags] & 1 << i))
 		continue;
 
-		w = TEXTW(tags[i]);
+                tag_txt = m->tagset[m->seltags] & 1 << i ? active_tag : tags[i];
+		w = TEXTW(tag_txt);
 		drw_setscheme(drw, scheme[m->tagset[m->seltags] & 1 << i ? SchemeSel : SchemeNorm]);
-		drw_text(drw, x, 0, w, bh, lrpad / 2, tags[i], urg & 1 << i);
+		drw_text(drw, x, 0, w, bh, lrpad / 2, tag_txt, urg & 1 << i);
 		/* Draw indicator only on currently selected tags */
 		if (occ & 1 << i && selmon->sel && selmon->sel->tags & 1 << i)
 			drw_rect(drw, x, 0, w, 2, m == selmon, urg & 1 << i);
@@ -1581,7 +1583,7 @@ setup(void)
 	if (!drw_fontset_create(drw, fonts, LENGTH(fonts)))
 		die("no fonts could be loaded.");
 	lrpad = drw->fonts->h;
-	bh = drw->fonts->h + 2;
+	bh = drw->fonts->h + 12;
 	updategeom();
 	/* init atoms */
 	utf8string = XInternAtom(dpy, "UTF8_STRING", False);
